@@ -1,94 +1,23 @@
+"""
+Built-in interfaces for the Poker app. Includes a TextInterface that can be
+run from the terminal and a GraphicsInterface built using the graphics.py
+package.
+
+All interfaces must have setMoney, setDice, wantToPlay, close, showResult,
+and chooseDice methods.
+
+"""
+
 from random import randint
 import sys
 from graphics import *
-from dieview2a import DieView
-from button2 import Button
-
-
-class Dice:
-    def __init__(self):
-        self.dice = [0]*5
-        self.rollAll()
-
-    def roll(self, which):
-        # which is a list of positions [1,3]
-        for pos in which:
-            self.dice[pos] = randint(1,6)
-
-    def rollAll(self):
-        self.roll(range(5))
-
-    def score(self):
-        # Return the name of the result and the dollar amount
-        counts = [0]*7
-        for value in self.dice:
-            counts[value] += 1
-
-        if 5 in counts:
-            return "Five of a Kind", 30
-        elif 4 in counts:
-            return "Four of a Kind", 15
-        elif (3 in counts) and (2 in counts):
-            return "Full House", 12
-        elif 3 in counts:
-            return "Three of a Kind", 8
-        elif not (2 in counts) and (counts[1] == 0 or counts[6] == 0):
-            return 'Straight', 20
-        elif counts.count(2) == 2:
-            return "Two Pairs", 5
-        else:
-            return 'Garbage', 0
-
-    def values(self):
-        return self.dice[:]
-
-
-class PokerApp:
-
-    def __init__(self, interface):
-        self.dice = Dice()
-        self.money = 100
-        self.interface = interface
-
-    def run(self):
-
-        while self.money >= 10 and self.interface.wantToPlay():
-            self.playRound()
-
-        self.interface.close()
-
-    def playRound(self):
-        # Deduct money
-        self.money = self.money - 10
-        self.interface.setMoney(self.money)
-        # Do the rolls and update dice
-        self.doRolls()
-        # Get score
-        result, score = self.dice.score()
-        self.interface.showResult(result, score)
-        self.money = self.money + score
-        self.interface.setMoney(self.money)
-
-    def doRolls(self):
-        self.dice.rollAll()
-        roll = 1
-        self.interface.setDice(self.dice.values())
-        toRoll = self.interface.chooseDice()
-
-        while roll < 3 and toRoll != []:
-            # roll the dice
-            self.dice.roll(toRoll)
-            # iterate the roll variable
-            roll += 1
-            # update the dice on the interface
-            self.interface.setDice(self.dice.values())
-            # select dice to roll again
-            if roll < 3:
-                toRoll = self.interface.chooseDice()
-
+from dieview import DieView
+from button import Button
 
 class TextInterface:
-
+    """
+    Text-based interface operated through the terminal.
+    """
     def __init__(self):
         print('Welcome to dice poker')
 
@@ -106,16 +35,28 @@ class TextInterface:
         print('\nThanks for playing!')
 
     def showResult(self, result, score):
-        #print('Dice:', values)
+        """
+        Displays the result of the roll and the money earned.
+        """
         print('{}. You win ${}.'.format(result, score))
 
     def chooseDice(self):
+        """
+        Prompts the user which dice they would like to roll. Must be
+        zero-indexed (the first die is die 0).
+        """
         return eval(input("Enter a list of which dice to change ([] to stop) "))
 
 
 class GraphicsInterface:
 
     def __init__(self):
+        """
+        Sets the starting screen for the game. Includes a title, background,
+        starting message, 5 dice (pre-set to value 1), buttons for clicking,
+        the roll and quit buttons, and a money talley.
+        """
+
         self.win = GraphWin("Dice Poker", 600, 400)
         self.win.setBackground('green3')
         banner = Text(Point(300, 30), "Welcome to the Poker Parlor")
@@ -150,6 +91,10 @@ class GraphicsInterface:
         self.money.draw(self.win)
 
     def createDice(self, center, size):
+        """
+        A helper method to draw the five dice to the screen.
+        """
+
         center.move(-3*size, 0)
         self.dice = []
         for i in range(5):
@@ -158,6 +103,9 @@ class GraphicsInterface:
             center.move(1.5*size, 0)
 
     def addDiceButtons(self, center, width, height):
+        """
+        A helper method to draw the five dice buttons to the screen.
+        """
         center.move(-3*width, 0)
         for i in range(1, 6):
             label = 'Die {}'.format(i)
@@ -166,17 +114,30 @@ class GraphicsInterface:
             center.move(1.5*width, 0)
 
     def setMoney(self, amt):
+        """
+        Updates the value of the money displayed on the screen.
+        """
         self.money.setText("${}".format(amt))
 
     def setDice(self, values):
+        """
+        Updates the values of the dice shown on the screen.
+        """
         for i in range(5):
             self.dice[i].setValue(values[i])
 
     def wantToPlay(self):
+        """
+        Returns True if the user wants to keep playing (indicated by hitting
+        the Roll button). Exits if the user hits the Quit button.
+        """
         ans = self.choose(['Roll', 'Quit'])
         return ans == 'Roll'# returns a boolean
 
     def close(self):
+        """
+        Closes the window. Used to end the game.
+        """
         self.win.close()
 
     def showResult(self, result, score):
@@ -187,8 +148,14 @@ class GraphicsInterface:
             self.msg.setText("You rolled {}".format(result))
 
     def choose(self, choices):
-        buttons = self.buttons
+        """
+        A generic method that creates a choice between two or more buttons for
+        the user. The user must click one of the buttons available. Outputs
+        the option selected by the user as a string, the label of the selected
+        button.
+        """
 
+        buttons = self.buttons
         for b in buttons:
             if b.getLabel() in choices:
                 b.activate()
@@ -204,6 +171,9 @@ class GraphicsInterface:
         return # the label of the button that the user selected
 
     def chooseDice(self):
+        """
+        Returns the dice the user selected for reroll.
+        """
         choices = [] # no dice have been chosen yet
 
         while True:
@@ -224,14 +194,3 @@ class GraphicsInterface:
                     return []
                 elif choices != []:
                     return choices
-
-
-def main():
-    interface = GraphicsInterface()
-    #interface.win.getMouse()
-    app = PokerApp(interface)
-    app.run()
-    interface.close()
-
-if __name__ == '__main__':
-    main()

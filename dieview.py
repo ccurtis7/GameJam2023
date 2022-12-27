@@ -1,13 +1,11 @@
-# dieview.py
+"""
+DieView is a widget that displays a graphical representation of a standard
+six-sided die.
+"""
 import sys
 from graphics import *
 
-
 class DieView():
-    """
-    DieView is a widget that displays a graphical representation of a standard
-    six-sided die.
-    """
 
     def __init__(self, win, center, size):
         """
@@ -72,6 +70,11 @@ class DieView():
 
 
 def main():
+    """
+    If DieView is run as a main program, it creates a window in which a die
+    of a selected value is displayed.
+    """
+
     value = int(input('Enter a number: '))
     win = GraphWin('Dice View')
     win.setCoords(0, 0, 10, 10)
