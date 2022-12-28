@@ -1,5 +1,7 @@
-from random import randint
 import sys
+sys.path.insert(0, '..')
+sys.path.insert(0, '../strategy')
+from random import randint
 from strategy import Strategy, ProbStrategy
 from studentStrategy import noRerollStrategy, rollTwiceStrategy
 from probStrategy import ProbStrategy2
