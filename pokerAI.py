@@ -1,6 +1,6 @@
 from random import randint
 import sys
-from strategy import Strategy
+from strategy import Strategy, ProbStrategy
 
 
 class Dice:
@@ -111,7 +111,7 @@ class PokerAI:
         self.dice.rollAll()
         roll = 1
         self.interface.setDice(self.dice.values())
-        toRoll = self.interface.chooseDice(self.dice.values())
+        toRoll = self.interface.chooseDice(self.dice.values(), roll)
 
         while roll < 3 and toRoll != []:
             # roll the dice
@@ -122,7 +122,7 @@ class PokerAI:
             self.interface.setDice(self.dice.values())
             # select dice to roll again
             if roll < 3:
-                toRoll = self.interface.chooseDice(self.dice.values())
+                toRoll = self.interface.chooseDice(self.dice.values(), roll)
 
 
 class TextAIInterface:
@@ -159,7 +159,7 @@ class TextAIInterface:
         Hard-codes in 50 games played. Automatically closes once 50 games
         are completed.
         """
-        if self.nthGame <= 50:
+        if self.nthGame <= 51:
             ans = 'yes'
             self.nthGame += 1
         else:
@@ -180,12 +180,12 @@ class TextAIInterface:
         #print('{}. You win ${}.'.format(result, score))
         pass
 
-    def chooseDice(self, values):
+    def chooseDice(self, values, roll):
         """
         Hard-codes in the rolling strategy of the AI. Currently contains an
         optimized rolling strategy that maximizes winnings.
         """
-        return Strategy(values)
+        return ProbStrategy(values, roll)
 
 
 def main():
