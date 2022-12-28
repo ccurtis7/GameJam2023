@@ -5,6 +5,7 @@
 # straight strategy as one option among many.
 import numpy as np
 from random import choice, randint, sample
+from itertools import combinations as comb
 
 def score(values, roll):
     """
@@ -88,6 +89,34 @@ def whichReroll(selection, values):
 
     return reroll
 
+def whichReroll2(selection, values):
+
+    values = values.copy()
+    counts, locs = takingStock(values)
+    ordered = []
+    if len(selection) == 0:
+        return []
+    else:
+        down = [5, 0, -1]
+        for j in range(*down):
+            idx = 0
+            count = 0
+            for i in range(counts.count(j)):
+                if count == 0:
+                    idx = counts.index(j)
+                else:
+                    idx = counts.index(j, idx+1)
+                ordered = ordered + j*[idx]
+                count += 1
+
+        reroll = []
+        for i in selection:
+            idx = values.index(ordered[i])
+            values[idx] = '.'
+            reroll.append(idx)
+
+    return reroll
+
 # Add in a random element?
 def MLStrategy(values, roll, memory, gameMemory):
     try:
@@ -111,3 +140,36 @@ def MLStrategy(values, roll, memory, gameMemory):
         gameMemory[result] = sel
 
     return whichReroll(sel, values), memory, gameMemory
+
+
+def MLStrategy2(values, roll, memory, gameMemory):
+    """
+    A second self-learning bot that keeps track of the complete state of the
+    dice, rather than a smaller portion of it.
+    """
+    counts, locs = takingStock(values)
+    counts[0] = roll
+    test = counts[1:]
+    test.sort(reverse=True)
+    id = ''.join([str(roll)] + [str(i) for i in test])
+    try:
+        sel = list(choice(memory[id]))
+        if len(list(memory[id])) > 550:
+            memory[id] = sample(list(memory[id]), 500)
+    except:
+        # possible rerolls
+        test = []
+        for i in range(6):
+            test = test + list(comb(range(5), i))
+        memory[id] = []
+        for i in test:
+            memory[id].append(list(i))
+
+        sel = choice(memory[id])
+
+    if roll == 1:
+        gameMemory = {id: sel}
+    else:
+        gameMemory[id] = sel
+
+    return whichReroll2(sel, values), memory, gameMemory

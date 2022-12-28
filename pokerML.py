@@ -3,7 +3,7 @@ import sys
 from strategy import Strategy, ProbStrategy
 from studentStrategy import noRerollStrategy, rollTwiceStrategy
 from probStrategy import ProbStrategy2
-from MLStrategy import MLStrategy
+from MLStrategy import MLStrategy, MLStrategy2
 import hdfdict
 import h5py
 
@@ -253,6 +253,7 @@ def main():
     test1 = h5py.File('pokerAI.h5', 'w')
     hdfdict.dump(memory, 'pokerAI.h5')
     test1.close()
+    #print(memory)
 
     sum = 0
     for i in winnings:
