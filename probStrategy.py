@@ -127,7 +127,7 @@ def fiveOfAKind(values, roll):
     reroll = [i for i in range(5) if i not in keep]
 
     # Calculate expected value
-    ex = 3.0*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Five of a Kind']
+    ex = prob(len(reroll), roll)*scores['Five of a Kind']
     return reroll, ex
 
 def fourOfAKind(values, roll):
@@ -142,7 +142,7 @@ def fourOfAKind(values, roll):
     else:
         keep = locs[np.argmax(counts)]
         reroll = [i for i in range(5) if i not in keep]
-    ex = 1.5*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Four of a Kind']
+    ex = prob(len(reroll), roll)*scores['Four of a Kind']
     return reroll, ex
 
 
@@ -161,7 +161,7 @@ def threeOfAKind(values, roll):
     else:
         keep = locs[np.argmax(counts)]
         reroll = [i for i in range(5) if i not in keep]
-    ex = 1.5*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Three of a Kind']
+    ex = prob(len(reroll), roll)*scores['Three of a Kind']
     return reroll, ex
 
 def fullHouse(values, roll):
@@ -179,7 +179,7 @@ def fullHouse(values, roll):
     elif safe <= 3:
         keep = locs[np.argmax(counts)]
         reroll = [i for i in range(5) if i not in keep]
-    ex = 2.2*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Full House']
+    ex = prob(len(reroll), roll)*scores['Full House']
     return reroll, ex
 
 def straight(values, roll):
@@ -195,7 +195,7 @@ def straight(values, roll):
     elif 6 in values:
         keep.append(values.index(6))
     reroll = [i for i in range(5) if i not in keep]
-    ex = 1.3*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Straight']
+    ex = prob(len(reroll), roll)*scores['Straight']
     return reroll, ex
 
 def twoPairs(values, roll):
@@ -220,10 +220,10 @@ def twoPairs(values, roll):
     else:
         reroll = [0,1,2,3,4]
         keep = []
-    ex = 1.5*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Two Pairs']
+    ex = prob(len(reroll), roll)*scores['Two Pairs']
     return reroll, ex
 
-def ProbStrategy(values, roll):
+def ProbStrategy2(values, roll):
 
     rerolls = {'Five of a Kind': fiveOfAKind,
            'Four of a Kind': fourOfAKind,

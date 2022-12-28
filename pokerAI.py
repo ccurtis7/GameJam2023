@@ -1,6 +1,8 @@
 from random import randint
 import sys
 from strategy import Strategy, ProbStrategy
+from studentStrategy import noRerollStrategy, rollTwiceStrategy
+from probStrategy import ProbStrategy2
 
 
 class Dice:
@@ -86,7 +88,7 @@ class PokerAI:
             self.playRound()
 
         self.interface.close(self.money)
-        print('You lasted {} games'.format(self.interface.nthGame))
+        #print('You lasted {} games'.format(self.interface.nthGame))
 
     def playRound(self):
         """
@@ -137,7 +139,7 @@ class TextAIInterface:
         """
         Initializes the interface.
         """
-        print('Welcome to dice poker')
+        #print('Welcome to dice poker')
         self.nthGame = 0
 
     def setMoney(self, amt):
@@ -151,7 +153,7 @@ class TextAIInterface:
         """
         Printing current dice values has been deactivated.
         """
-        #print('Dice:', values)
+        print('Dice:', values)
         pass
 
     def wantToPlay(self):
@@ -177,7 +179,7 @@ class TextAIInterface:
         Printing results to screen is deactivated.
         """
         #print('Dice:', values)
-        #print('{}. You win ${}.'.format(result, score))
+        print('{}. You win ${}.'.format(result, score))
         pass
 
     def chooseDice(self, values, roll):
@@ -185,7 +187,7 @@ class TextAIInterface:
         Hard-codes in the rolling strategy of the AI. Currently contains an
         optimized rolling strategy that maximizes winnings.
         """
-        return ProbStrategy(values, roll)
+        return ProbStrategy2(values, roll)
 
 
 def main():
