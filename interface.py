@@ -3,16 +3,17 @@ Built-in interfaces for the Poker app. Includes a TextInterface that can be
 run from the terminal and a GraphicsInterface built using the graphics.py
 package.
 
-All interfaces must have setMoney, setDice, wantToPlay, close, showResult,
-and chooseDice methods.
+All interfaces must have displayMoney, displayDice, displayStart, displayEnd,
+wantToPlay, close, showResult, and chooseDice methods. GS is a GameState object
+that contains the dice values (values), the amount of money the player has
+(money), the roll number for the current hand (roll), and the hand number (hand).
 
 """
 
-from random import randint
-import sys
 from graphics import *
 from dieview import DieView
 from button import Button
+from strategy import Strategy, ProbStrategy
 
 class TextInterface:
     """
@@ -20,27 +21,33 @@ class TextInterface:
     """
     def __init__(self):
         print('Welcome to dice poker')
+        
+    def displayStart(self, GS):
+        self.displayMoney(GS)
 
-    def setMoney(self, amt):
-        print('You currently have ${}.'.format(amt))
+    def displayEnd(self, GS):
+        self.displayMoney(GS)
 
-    def setDice(self, values):
-        print('Dice:', values)
+    def displayMoney(self, GS):
+        print('You currently have ${}.'.format(GS.money))
 
-    def wantToPlay(self):
+    def displayDice(self, GS):
+        print('Dice:', GS.values)
+
+    def wantToPlay(self, GS):
         ans = input('Do you wish to try your luck? ')
         return ans[0] in 'yY'# returns a boolean
 
-    def close(self):
+    def close(self, GS):
         print('\nThanks for playing!')
 
-    def showResult(self, result, score):
+    def showResult(self, GS, result, score):
         """
         Displays the result of the roll and the money earned.
         """
         print('{}. You win ${}.'.format(result, score))
 
-    def chooseDice(self):
+    def chooseDice(self, GS):
         """
         Prompts the user which dice they would like to roll. Must be
         zero-indexed (the first die is die 0).
@@ -113,20 +120,26 @@ class GraphicsInterface:
             self.buttons.append(b)
             center.move(1.5*width, 0)
 
-    def setMoney(self, amt):
+    def displayStart(self, GS):
+        self.displayMoney(GS)
+
+    def displayEnd(self, GS):
+        self.displayMoney(GS)
+
+    def displayMoney(self, GS):
         """
         Updates the value of the money displayed on the screen.
         """
-        self.money.setText("${}".format(amt))
+        self.money.setText("${}".format(GS.money))
 
-    def setDice(self, values):
+    def displayDice(self, GS):
         """
         Updates the values of the dice shown on the screen.
         """
         for i in range(5):
-            self.dice[i].setValue(values[i])
+            self.dice[i].setValue(GS.values[i])
 
-    def wantToPlay(self):
+    def wantToPlay(self, GS):
         """
         Returns True if the user wants to keep playing (indicated by hitting
         the Roll button). Exits if the user hits the Quit button.
@@ -134,13 +147,13 @@ class GraphicsInterface:
         ans = self.choose(['Roll', 'Quit'])
         return ans == 'Roll'# returns a boolean
 
-    def close(self):
+    def close(self, GS):
         """
         Closes the window. Used to end the game.
         """
         self.win.close()
 
-    def showResult(self, result, score):
+    def showResult(self, GS, result, score):
         #print('Dice:', values)
         if score > 0:
             self.msg.setText("{}! You win {}".format(result, score))
@@ -170,7 +183,7 @@ class GraphicsInterface:
 
         return # the label of the button that the user selected
 
-    def chooseDice(self):
+    def chooseDice(self, GS):
         """
         Returns the dice the user selected for reroll.
         """
@@ -194,3 +207,55 @@ class GraphicsInterface:
                     return []
                 elif choices != []:
                     return choices
+
+class AIInterface:
+    """
+    Text-based interface operated through the terminal.
+    """
+    def __init__(self):
+        print('Welcome to AI Dice poker')
+        self.maxhands = int(input('How many hands? '))
+        if type(self.maxhands) != int:
+            self.maxhands = 100000
+            
+        debug = input('Use the debugger [Y/N]? ')
+        if debug[0] in 'Yy':
+            self.debug = True
+        else:
+            self.debug = False
+
+    def displayStart(self, GS):
+        if self.debug:
+            print('Starting Hand {}. You currently have ${}.'.format(GS.hand, GS.money))
+
+    def displayEnd(self, GS):
+        if self.debug:
+            print('Ending Hand {}. You currently have ${}.'.format(GS.hand, GS.money))
+
+    def displayDice(self, GS):
+        if self.debug:
+            print('Dice:', GS.values)
+
+    def wantToPlay(self, GS):
+        if GS.hand == self.maxhands:
+            return False
+        return True
+
+    def close(self, GS):
+        print('Hands played: {}'.format(GS.hand))
+        print('Net result: {}'.format(GS.money))
+        print('Average result: {}'.format(GS.money/GS.hand))
+
+    def showResult(self, GS, result, score):
+        """
+        Displays the result of the roll and the money earned.
+        """
+        if self.debug:
+            print('{}. You win ${}.'.format(result, score))
+
+    def chooseDice(self, GS):
+        """
+        Prompts the user which dice they would like to roll. Must be
+        zero-indexed (the first die is die 0).
+        """
+        return Strategy(GS.values, GS.roll, self.debug)

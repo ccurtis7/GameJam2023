@@ -1,8 +1,7 @@
 import numpy as np
 from random import randint
 
-
-def Strategy(values, roll):
+def Strategy(values, roll, debug):
     """
     The counts variable keeps track of the number of each kind of die.
     The locs variable keeps track of the locations of each kind of die.
@@ -127,37 +126,27 @@ def fiveOfAKind(values, roll):
     reroll = [i for i in range(5) if i not in keep]
 
     # Calculate expected value
-    ex = 3.0*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Five of a Kind']
+    ex = 2*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Five of a Kind']
     return reroll, ex
 
 def fourOfAKind(values, roll):
     counts, locs = takingStock(values)
     safe = np.max(counts)
-    if safe == 5:
+    if safe >= 4:
         keep = [0, 1, 2, 3, 4]
         reroll = []
-    elif safe == 4:
-        keep = locs[counts.index(4)]
-        reroll = [i for i in range(5) if i not in keep]
     else:
         keep = locs[np.argmax(counts)]
         reroll = [i for i in range(5) if i not in keep]
     ex = 1.5*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Four of a Kind']
     return reroll, ex
 
-
 def threeOfAKind(values, roll):
     counts, locs = takingStock(values)
     safe = np.max(counts)
-    if safe == 5:
+    if safe >= 3:
         keep = [0, 1, 2, 3, 4]
         reroll = []
-    elif safe == 4:
-        keep = locs[counts.index(4)]
-        reroll = [i for i in range(5) if i not in keep]
-    elif safe == 3:
-        keep = locs[counts.index(3)]
-        reroll = [i for i in range(5) if i not in keep]
     else:
         keep = locs[np.argmax(counts)]
         reroll = [i for i in range(5) if i not in keep]
@@ -179,7 +168,7 @@ def fullHouse(values, roll):
     elif safe <= 3:
         keep = locs[np.argmax(counts)]
         reroll = [i for i in range(5) if i not in keep]
-    ex = 2.2*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Full House']
+    ex = 1.5*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Full House']
     return reroll, ex
 
 def straight(values, roll):
@@ -195,7 +184,7 @@ def straight(values, roll):
     elif 6 in values:
         keep.append(values.index(6))
     reroll = [i for i in range(5) if i not in keep]
-    ex = 1.3*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Straight']
+    ex = 1.5*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Straight']
     return reroll, ex
 
 def twoPairs(values, roll):
@@ -223,7 +212,7 @@ def twoPairs(values, roll):
     ex = 1.5*score([values[i] for i in keep] + [randint(1,6) for i in range(5-len(keep))]) + prob(len(reroll), roll)*scores['Two Pairs']
     return reroll, ex
 
-def ProbStrategy(values, roll):
+def ProbStrategy(values, roll, debug):
 
     rerolls = {'Five of a Kind': fiveOfAKind,
            'Four of a Kind': fourOfAKind,
