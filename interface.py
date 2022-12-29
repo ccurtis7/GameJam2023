@@ -13,7 +13,7 @@ that contains the dice values (values), the amount of money the player has
 from graphics import *
 from dieview import DieView
 from button import Button
-from strategy import Strategy, ProbStrategy
+from strategy import Strategy
 
 class TextInterface:
     """
@@ -21,7 +21,7 @@ class TextInterface:
     """
     def __init__(self):
         print('Welcome to dice poker')
-        
+
     def displayStart(self, GS):
         self.displayMoney(GS)
 
@@ -217,7 +217,7 @@ class AIInterface:
         self.maxhands = int(input('How many hands? '))
         if type(self.maxhands) != int:
             self.maxhands = 100000
-            
+
         debug = input('Use the debugger [Y/N]? ')
         if debug[0] in 'Yy':
             self.debug = True
