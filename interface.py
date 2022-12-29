@@ -13,7 +13,7 @@ that contains the dice values (values), the amount of money the player has
 from graphics import *
 from dieview import DieView
 from button import Button
-from strategy import Strategy
+from strategy import Strategy, RuleStrategy
 
 class TextInterface:
     """
@@ -258,4 +258,4 @@ class AIInterface:
         Prompts the user which dice they would like to roll. Must be
         zero-indexed (the first die is die 0).
         """
-        return Strategy(GS.values, GS.roll, self.debug)
+        return RuleStrategy(GS.values, GS.roll, self.debug)
