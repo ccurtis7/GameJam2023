@@ -72,7 +72,7 @@ class PokerApp:
         0, and defines the chosen interface.
         """
         self.dice = Dice()
-        self.money = 0
+        self.money = 100
         self.roll = 0
         self.interface = interface
 
@@ -112,7 +112,7 @@ class PokerApp:
 
     def doRolls(self):
         """
-        Manages the dice for a single round of a game. 
+        Manages the dice for a single round of a game.
         """
         self.dice.roll(range(5))
         self.roll = 1
@@ -146,4 +146,3 @@ def PokerAppSelector():
         print('Invalid response.')
         return None
     return interface
-        

@@ -13,7 +13,7 @@ that contains the dice values (values), the amount of money the player has
 from graphics import *
 from dieview import DieView
 from button import Button
-from strategy import Strategy, ProbStrategy
+from strategy import Strategy
 
 class TextInterface:
     """
@@ -21,7 +21,8 @@ class TextInterface:
     """
     def __init__(self):
         print('Welcome to dice poker')
-        
+        self.name = 'Text'
+
     def displayStart(self, GS):
         self.displayMoney(GS)
 
@@ -63,7 +64,7 @@ class GraphicsInterface:
         starting message, 5 dice (pre-set to value 1), buttons for clicking,
         the roll and quit buttons, and a money talley.
         """
-
+        self.name = 'Graphics'
         self.win = GraphWin("Dice Poker", 600, 400)
         self.win.setBackground('green3')
         banner = Text(Point(300, 30), "Welcome to the Poker Parlor")
@@ -214,10 +215,11 @@ class AIInterface:
     """
     def __init__(self):
         print('Welcome to AI Dice poker')
+        self.name = 'AI'
         self.maxhands = int(input('How many hands? '))
         if type(self.maxhands) != int:
-            self.maxhands = 100000
-            
+            self.maxhands = 10000
+
         debug = input('Use the debugger [Y/N]? ')
         if debug[0] in 'Yy':
             self.debug = True
@@ -237,14 +239,14 @@ class AIInterface:
             print('Dice:', GS.values)
 
     def wantToPlay(self, GS):
-        if GS.hand == self.maxhands:
+        if (GS.hand > self.maxhands) or (GS.money < 0):
             return False
         return True
 
     def close(self, GS):
         print('Hands played: {}'.format(GS.hand))
-        print('Net result: {}'.format(GS.money))
-        print('Average result: {}'.format(GS.money/GS.hand))
+        print('Net result: {}'.format(GS.money-100))
+        print('Average result: {}'.format((GS.money-100)/GS.hand))
 
     def showResult(self, GS, result, score):
         """
