@@ -8,6 +8,20 @@ from pokerBotEngine import PokerAI, PokerAppSelector
 import h5py
 import hdfdict
 
+def saveMemory(memory, file):
+    memoryFile = open(file, 'w')
+    for key, entry in memory.items():
+        print('{}:{}'.format(key, entry), file=memoryFile)
+    memoryFile.close()
+
+def loadMemory(file):
+    memoryFile = open(file, 'r')
+    memory = {}
+    for line in memoryFile.readlines():
+        entry = line.replace('\n', '').split(':')
+        memory[entry[0]] = eval(entry[1])
+    memoryFile.close()
+    return memory
 
 def main():
     interface = PokerAppSelector()
@@ -15,39 +29,14 @@ def main():
         return
     elif interface.name == 'bot':
         # load memory
-        memoryFile = os.path.join(strategyDir, 'pokerAI3.h5')
-        test1 = h5py.File(memoryFile, 'r')
-        memory = dict(hdfdict.load(memoryFile))
-        test1.close()
-        # Doing a memory cleaning
-        #memory = {}
+        memoryFile = os.path.join(strategyDir, 'pokerAI3a.txt')
+        memory = loadMemory(memoryFile)
 
         app = PokerAI(interface, memory)
         memory = app.run()
         #print(memory)
         # save memory
-        try:
-            test1 = h5py.File(memoryFile, 'w')
-            hdfdict.dump(memory, memoryFile)
-            test1.close()
-        except:
-            for key, entry in memory.items():
-                i = 0
-                for sel in entry:
-                    if (type(sel) == int) | (type(sel) == np.int32) | (type(sel) == np.int64):
-                        pass
-                    elif type(sel) == np.ndarray:
-                        memory[key][i] = list(sel)
-                    else:
-                        _ = memory[key].pop(i)
-                    i += 1
-            try:
-                test1.close()
-            except:
-                pass
-            test1 = h5py.File(memoryFile, 'w')
-            hdfdict.dump(memory, memoryFile)
-            test1.close()
+        saveMemory(memory, memoryFile)
 
         #print(memory)
     else:

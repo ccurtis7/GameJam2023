@@ -221,11 +221,11 @@ def MLStrategy3(values, roll, debug, memory, gameMemory):
 
     except:
         # Reroll the 5 highest, 5 lowest, or straight strategy
-        memory[result] = list(range(-5, 6))*3
+        memory[result] = list(range(-5, 6))*20
         # Combo strategy, add in all possible roll combinations.
         test = []
         for i in range(1,6):
-            test = test + list(comb(range(5), i))*3
+            test = test + list(comb(range(5), i))*20
         for i in test:
             memory[result].append(list(i))
 
