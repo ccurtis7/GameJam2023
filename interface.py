@@ -13,7 +13,8 @@ that contains the dice values (values), the amount of money the player has
 from graphics import *
 from dieview import DieView
 from button import Button
-from strategy import Strategy, RuleStrategy
+from strategy import Strategy
+from MLstrategy import MLStrategy, MLStrategy3
 
 class TextInterface:
     """
@@ -21,6 +22,7 @@ class TextInterface:
     """
     def __init__(self):
         print('Welcome to dice poker')
+        self.name = 'text'
 
     def displayStart(self, GS):
         self.displayMoney(GS)
@@ -63,7 +65,7 @@ class GraphicsInterface:
         starting message, 5 dice (pre-set to value 1), buttons for clicking,
         the roll and quit buttons, and a money talley.
         """
-
+        self.name = 'graphics'
         self.win = GraphWin("Dice Poker", 600, 400)
         self.win.setBackground('green3')
         banner = Text(Point(300, 30), "Welcome to the Poker Parlor")
@@ -214,6 +216,7 @@ class AIInterface:
     """
     def __init__(self):
         print('Welcome to AI Dice poker')
+        self.name = 'ai'
         self.maxhands = int(input('How many hands? '))
         if type(self.maxhands) != int:
             self.maxhands = 100000
@@ -259,3 +262,56 @@ class AIInterface:
         zero-indexed (the first die is die 0).
         """
         return RuleStrategy(GS.values, GS.roll, self.debug)
+
+class BotInterface:
+    """
+    Text-based interface operated through the terminal.
+    """
+    def __init__(self):
+        print('Welcome to AI Dice poker')
+        self.name = 'bot'
+        self.maxhands = int(input('How many hands? '))
+        if type(self.maxhands) != int:
+            self.maxhands = 100000
+
+        debug = input('Use the debugger [Y/N]? ')
+        if debug[0] in 'Yy':
+            self.debug = True
+        else:
+            self.debug = False
+
+    def displayStart(self, GS):
+        if self.debug:
+            print('Starting Hand {}. You currently have ${}.'.format(GS.hand, GS.money))
+
+    def displayEnd(self, GS):
+        if self.debug:
+            print('Ending Hand {}. You currently have ${}.'.format(GS.hand, GS.money))
+
+    def displayDice(self, GS):
+        if self.debug:
+            print('Dice:', GS.values)
+
+    def wantToPlay(self, GS):
+        if GS.hand == self.maxhands:
+            return False
+        return True
+
+    def close(self, GS):
+        print('Hands played: {}'.format(GS.hand))
+        print('Net result: {}'.format(GS.money))
+        print('Average result: {}'.format(GS.money/GS.hand))
+
+    def showResult(self, GS, result, score):
+        """
+        Displays the result of the roll and the money earned.
+        """
+        if self.debug:
+            print('{}. You win ${}.'.format(result, score))
+
+    def chooseDice(self, GS, memory, gameMemory):
+        """
+        Prompts the user which dice they would like to roll. Must be
+        zero-indexed (the first die is die 0).
+        """
+        return MLStrategy3(GS.values, GS.roll, self.debug, memory, gameMemory)
