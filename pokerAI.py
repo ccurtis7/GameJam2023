@@ -1,8 +1,14 @@
 from random import randint
 import sys
-from strategy import Strategy, ProbStrategy
-from studentStrategy import noRerollStrategy, rollTwiceStrategy
-from probStrategy import ProbStrategy2
+from strategy.strategy import Strategy, ProbStrategy
+from strategy.studentStrategy import noRerollStrategy, rollTwiceStrategy, workingStrategy
+from strategy.probStrategy import ProbStrategy2
+
+# Kind of clunky rn.
+# In order to run, change the strategy file on Line 193
+# To change the number of games played, change ngames variable Line 199
+# To stop printing die values, comment out 162
+
 
 
 class Dice:
@@ -153,7 +159,7 @@ class TextAIInterface:
         """
         Printing current dice values has been deactivated.
         """
-        print('Dice:', values)
+        #print('Dice:', values)
         pass
 
     def wantToPlay(self):
@@ -187,12 +193,13 @@ class TextAIInterface:
         Hard-codes in the rolling strategy of the AI. Currently contains an
         optimized rolling strategy that maximizes winnings.
         """
-        return ProbStrategy2(values, roll)
+        return workingStrategy(values, roll)
 
 
 def main():
     winnings = []
-    for i in range(500):
+    ngames = 500
+    for i in range(ngames):
         interface = TextAIInterface()
         #interface.win.getMouse()
         app = PokerAI(interface)
@@ -203,7 +210,7 @@ def main():
     sum = 0
     for i in winnings:
         sum += i
-    print('Your average winnings are {:.2f}'.format(sum/500 - 100))
+    print('Your average winnings are {:.2f}'.format(sum/ngames - 100))
 
 if __name__ == '__main__':
     main()
