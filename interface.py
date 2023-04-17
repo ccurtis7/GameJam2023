@@ -13,8 +13,9 @@ that contains the dice values (values), the amount of money the player has
 from graphics import *
 from dieview import DieView
 from button import Button
-from strategy import Strategy
-from MLstrategy import MLStrategy, MLStrategy3
+from basicStrategy import RuleStrategy
+from strategy.strategy import Strategy
+from strategy.MLstrategy import MLStrategy, MLStrategy3
 
 class TextInterface:
     """

@@ -1,10 +1,10 @@
 import sys
 import os
 import numpy as np
-strategyDir = os.path.join(os.getcwd(), 'strategy')
-sys.path.insert(0, strategyDir)
+# strategyDir = os.path.join(os.getcwd(), 'strategy')
+# sys.path.insert(0, strategyDir)
 from pokerEngine import PokerApp
-from pokerBotEngine import PokerAI, PokerAppSelector
+from strategy.pokerBotEngine import PokerAI, PokerAppSelector
 import h5py
 import hdfdict
 
