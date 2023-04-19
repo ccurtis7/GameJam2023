@@ -10,7 +10,7 @@ def main():
         app.run()
     else:
         winnings = []
-        for i in range(1000):
+        for i in range(2000):
             app = PokerApp(interface)
             app.run()
             winnings.append(app.money)

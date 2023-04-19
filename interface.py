@@ -13,7 +13,7 @@ that contains the dice values (values), the amount of money the player has
 from graphics import *
 from dieview import DieView
 from button import Button
-from strategy import Strategy
+from strategy.strategy import Strategy, CustomStrategy
 
 class TextInterface:
     """

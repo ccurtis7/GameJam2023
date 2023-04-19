@@ -1,6 +1,10 @@
 import numpy as np
 from random import randint
 
+def CustomStrategy(values, roll, debug):
+
+    return []
+
 def Strategy(values, roll, debug):
     """
     The counts variable keeps track of the number of each kind of die.
